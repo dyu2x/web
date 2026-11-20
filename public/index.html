@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mesina Farms Connect</title><link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="login" class="login-wrap">
+    <form id="login-form" class="login-card">
+      <div class="brand-mark">MF</div><h1>Mesina Farms Connect</h1><p>Omnichannel customer communications</p>
+      <label>Email<input id="email" type="email" required autocomplete="username"></label>
+      <label>Password<input id="password" type="password" required autocomplete="current-password"></label>
+      <button>Sign in</button><div id="login-error" class="error"></div>
+    </form>
+  </div>
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark small">MF</div><div><b>Mesina Farms</b><small>CONNECT</small></div></div>
+      <div class="nav-title">WORKSPACE</div>
+      <button class="nav active">▤ &nbsp; Inbox <span id="open-count">0</span></button>
+      <div class="nav-title">CHANNELS</div>
+      <div class="channel">🔵 &nbsp; Messenger</div><div class="channel">🟢 &nbsp; WhatsApp</div><div class="channel">🌐 &nbsp; Website Live Chat</div>
+      <div class="sidebar-bottom"><span id="agent-name">Agent</span><button id="logout" class="secondary">Sign out</button></div>
+    </aside>
+    <main class="main">
+      <header><div><h2>Inbox</h2><p>Manage customer conversations across all channels.</p></div><button id="refresh" class="secondary">↻ Refresh</button></header>
+      <section class="inbox">
+        <div class="conversation-list"><div class="list-head"><b>Conversations</b><select id="filter"><option value="">All statuses</option><option value="open">Open</option><option value="pending">Pending</option><option value="closed">Closed</option></select></div><div id="conversations"></div></div>
+        <div class="chat-panel"><div id="empty" class="empty">Select a conversation to view messages.</div>
+          <div id="chat" class="hidden chat-content"><div class="chat-head"><div><b id="customer-name"></b><small id="customer-meta"></small></div><select id="status"><option value="open">Open</option><option value="pending">Pending</option><option value="closed">Closed</option></select></div>
+            <div id="messages" class="messages"></div>
+            <form id="reply-form" class="reply"><input id="reply-text" placeholder="Write a reply..." autocomplete="off"><button>Send</button></form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+<script src="/app.js"></script>
+</body></html>
