@@ -81,12 +81,13 @@ async function ensureSchema(sql) {
 async function ensureAdmin(sql, env) {
   const email = (env.ADMIN_EMAIL || '').trim().toLowerCase();
   const password = env.ADMIN_PASSWORD || '';
-  if (!email || !password) throw new Error('Set ADMIN_EMAIL and ADMIN_PASSWORD Worker secrets before first login.');
-  const rows = await sql`SELECT id FROM agents LIMIT 1`;
-  if (!rows.length) {
-    const hash = await hashPassword(password);
-    await sql`INSERT INTO agents(email,password_hash,display_name,role) VALUES(${email},${hash},'Administrator','admin') ON CONFLICT(email) DO NOTHING`;
-  }
+  if (!email || !password) throw new Error('Set ADMIN_EMAIL and ADMIN_PASSWORD Worker secrets before login.');
+  // Keep the configured bootstrap administrator synchronized with Worker secrets.
+  // This also repairs installations where another agent row existed before first login.
+  const hash = await hashPassword(password);
+  await sql`INSERT INTO agents(email,password_hash,display_name,role,is_active)
+    VALUES(${email},${hash},'Administrator','admin',TRUE)
+    ON CONFLICT(email) DO UPDATE SET password_hash=EXCLUDED.password_hash,is_active=TRUE`;
 }
 async function auth(request, env, sql) {
   const header = request.headers.get('Authorization') || '';

@@ -40,7 +40,7 @@ Set a long random `APP_SECRET`, for example:
 openssl rand -hex 32
 ```
 
-Set `ADMIN_EMAIL` and a strong `ADMIN_PASSWORD`. The first login bootstraps the initial admin agent if the `agents` table is empty. The password is stored as a PBKDF2-SHA256 hash.
+Set `ADMIN_EMAIL` and a strong `ADMIN_PASSWORD`. On login, the Worker ensures the configured `ADMIN_EMAIL` exists and synchronizes its password from the `ADMIN_PASSWORD` Worker secret. The password is stored as a PBKDF2-SHA256 hash. Keep these two secrets as the source of truth for the bootstrap administrator; changing `ADMIN_PASSWORD` and redeploying rotates that account password.
 
 ## 3. Configure production Worker secrets
 
@@ -97,7 +97,7 @@ Open the local Wrangler URL (normally `http://localhost:8787`). Check:
 curl http://localhost:8787/health
 ```
 
-The first API request initializes the schema in Neon. The first successful admin login creates the admin account. Do not expose local development with weak secrets.
+The first API request initializes the schema in Neon. The login endpoint ensures the configured bootstrap admin exists and synchronizes its password from the Worker secrets. Do not expose local development with weak secrets.
 
 ## 5. Deploy
 
@@ -170,3 +170,16 @@ Protect backup files and test restores.
 ## 11. Health check
 
 `GET /health` returns the runtime identity. For a real database check, log in or call an authenticated API endpoint; `/health` intentionally does not expose database credentials or internal error details.
+
+
+## Login troubleshooting / administrator recovery
+
+If the dashboard rejects the administrator login, set the intended credentials again and deploy:
+
+```bash
+npx wrangler secret put ADMIN_EMAIL
+npx wrangler secret put ADMIN_PASSWORD
+npx wrangler deploy
+```
+
+Enter the exact email and password stored in those secrets. The Worker synchronizes the configured bootstrap administrator password from these secrets when the login endpoint is called. Existing conversations and contacts are not deleted by this operation.
